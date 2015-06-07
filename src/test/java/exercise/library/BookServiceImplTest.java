@@ -16,7 +16,7 @@ public class BookServiceImplTest {
 	public void shouldRetrieveBookByIsbn( ) throws Exception {
 		Book exampleBook = new Book( "ISBN-001", "Some Title", "Some description." );
 		Map<String, Book> books = Collections.singletonMap( exampleBook.getIsbn( ), exampleBook );
-		instance = new BookServiceImpl( isbn -> books.get( isbn ) );
+		instance = new BookServiceImpl( books::get );
 		Book book = instance.retrieveBook( "ISBN-001" );
 		assertSame( book, exampleBook );
 	}
@@ -61,7 +61,7 @@ public class BookServiceImplTest {
 	public void shouldReturnSummaryByIsbn( ) throws Exception {
 		Book exampleBook = new Book( "ISBN-001", "Some Title", "Some description." );
 		Map<String, Book> books = Collections.singletonMap( exampleBook.getIsbn( ), exampleBook );
-		instance = new BookServiceImpl( isbn -> books.get( isbn ) );
+		instance = new BookServiceImpl( books::get );
 		String summary = instance.getBookSummary( "ISBN-001" );
 		assertEquals( summary, "[ISBN-001] Some Title - Some description." );
 	}
@@ -71,7 +71,7 @@ public class BookServiceImplTest {
 		Book exampleBook = new Book( "ISBN-001", "Some Title",
 				"One Two Three, Four Five Six. Seven Eight Nine, Ten Eleven Twelve." );
 		Map<String, Book> books = Collections.singletonMap( exampleBook.getIsbn( ), exampleBook );
-		instance = new BookServiceImpl( isbn -> books.get( isbn ) );
+		instance = new BookServiceImpl( books::get );
 		String summary = instance.getBookSummary( "ISBN-001" );
 		assertEquals( summary, "[ISBN-001] Some Title - One Two Three, Four Five Six. Seven Eight Nine, Ten..." );
 	}

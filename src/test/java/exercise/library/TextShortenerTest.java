@@ -8,7 +8,7 @@ import static org.testng.Assert.assertEquals;
 
 public class TextShortenerTest {
 
-	private TextShortener instance = new TextShortener( 3 );
+	private final TextShortener instance = new TextShortener( 3 );
 
 	@DataProvider( name = "summary" )
 	public static Object[][] getIsbnCodes( ) {

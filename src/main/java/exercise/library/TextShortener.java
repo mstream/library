@@ -17,7 +17,7 @@ class TextShortener {
 
 	String shorten( String text ) {
 		if ( text == null ) {
-			return text;
+			return null;
 		}
 		if ( text.trim( ).length( ) == 0 ) {
 			return "";
@@ -26,8 +26,9 @@ class TextShortener {
 		if ( matcher.matches( ) ) {
 			return text;
 		}
-		int words;
-		for ( words = wordsNumber - 1; words > 0 && matcher.find( ); words-- ) {
+		int words = wordsNumber - 1;
+		while ( words > 0 && matcher.find( ) ) {
+			words--;
 		}
 		if ( words > 0 ) {
 			return text;
@@ -39,4 +40,5 @@ class TextShortener {
 		}
 		return shortenedText + "...";
 	}
+
 }
