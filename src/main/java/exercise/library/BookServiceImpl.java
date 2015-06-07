@@ -1,36 +1,38 @@
 package exercise.library;
 
 import java.util.Optional;
-import java.util.regex.Pattern;
 
 
 public class BookServiceImpl implements BookService {
 
 	private final BookRepository bookRepository;
-	private final Pattern isbnPattern;
+	private final IsbnValidator isbnValidator;
+	private final BookSummaryBuilder bookSummaryBuilder;
 
 	public BookServiceImpl( BookRepository bookRepository ) {
-		if ( bookRepository == null ) {
-			throw new IllegalArgumentException( "bookRepository must not be null" );
-		}
 		this.bookRepository = bookRepository;
-		isbnPattern = Pattern.compile( "ISBN-\\d+" );
+		this.isbnValidator = new IsbnValidator( "ISBN-\\d+$" );
+		this.bookSummaryBuilder = new BookSummaryBuilder( "[%s] %s - %s", 10 );
 	}
 
 	@Override
 	public Book retrieveBook( final String isbn ) throws BookNotFoundException {
-		checkIsbnFormat( isbn );
-		return Optional.ofNullable( bookRepository.retrieveBook( isbn ) ).orElseThrow( BookNotFoundException::new );
+		return getBook( isbn );
 	}
 
 	@Override
 	public String getBookSummary( final String isbn ) throws BookNotFoundException {
-		return null;
+		return bookSummaryBuilder.build( getBook( isbn ) );
 	}
 
 	private void checkIsbnFormat( String isbn ) {
-		if ( !isbnPattern.matcher( isbn ).matches( ) ) {
+		if ( !isbnValidator.isValid( isbn ) ) {
 			throw new IllegalArgumentException( "The book isbn must begin with 'ISBN-'" );
 		}
+	}
+
+	private Book getBook( String isbn ) throws BookNotFoundException {
+		checkIsbnFormat( isbn );
+		return Optional.ofNullable( bookRepository.retrieveBook( isbn ) ).orElseThrow( BookNotFoundException::new );
 	}
 }

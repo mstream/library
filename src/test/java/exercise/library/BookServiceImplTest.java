@@ -38,4 +38,42 @@ public class BookServiceImplTest {
 		instance = new BookServiceImpl( isbn -> null );
 		instance.retrieveBook( "ISBN-001" );
 	}
+
+	@Test
+	public void shouldEnsureThatIsbnIsWellFormattedWhenAskingForSummary( ) throws Exception {
+		instance = new BookServiceImpl( isbn -> null );
+		try {
+			instance.getBookSummary( "001" );
+		} catch ( IllegalArgumentException e ) {
+			assertEquals( e.getMessage( ), "The book isbn must begin with 'ISBN-'" );
+			return;
+		}
+		fail( "IllegalArgumentException has not been thrown." );
+	}
+
+	@Test( expectedExceptions = { BookNotFoundException.class } )
+	public void shouldThrowBookNotFoundExceptionIfBookDoesNotExistWhenAskingForSummary( ) throws Exception {
+		instance = new BookServiceImpl( isbn -> null );
+		instance.getBookSummary( "ISBN-001" );
+	}
+
+	@Test
+	public void shouldReturnSummaryByIsbn( ) throws Exception {
+		Book exampleBook = new Book( "ISBN-001", "Some Title", "Some description." );
+		Map<String, Book> books = Collections.singletonMap( exampleBook.getIsbn( ), exampleBook );
+		instance = new BookServiceImpl( isbn -> books.get( isbn ) );
+		String summary = instance.getBookSummary( "ISBN-001" );
+		assertEquals( summary, "[ISBN-001] Some Title - Some description." );
+	}
+
+	@Test
+	public void shouldShortenReviewToTenWordsWhenAskingForSummary( ) throws Exception {
+		Book exampleBook = new Book( "ISBN-001", "Some Title",
+				"One Two Three, Four Five Six. Seven Eight Nine, Ten Eleven Twelve." );
+		Map<String, Book> books = Collections.singletonMap( exampleBook.getIsbn( ), exampleBook );
+		instance = new BookServiceImpl( isbn -> books.get( isbn ) );
+		String summary = instance.getBookSummary( "ISBN-001" );
+		assertEquals( summary, "[ISBN-001] Some Title - One Two Three, Four Five Six. Seven Eight Nine, Ten..." );
+	}
+
 }
